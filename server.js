@@ -1,45 +1,37 @@
-// server.js
-// where your node app starts
+// Timestamp microservice
 
-// init project
+// Takes a given natural or unix time, and returns a JSON object
+// that has both the natural and unix time in it.
 var express = require('express');
 var moment = require('moment');
 var app = express();
 
-// we've started you off with Express, 
-// but feel free to use whatever libs or frameworks you'd like through `package.json`.
-
-// http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
-// http://expressjs.com/en/starter/basic-routing.html
-app.get("*", function (request, response) {
-  var params = request.params[0];
-  var timestamp = params.split('/')[1];
-  var date = new Date();
-  var jsonObj = {
-    "unix": null,
-    "natural": null
-  }
-  
-  if (/^\d*$/.test(timestamp)) {
-    date.setTime(timestamp);
-  } else {
-    date = new Date(timestamp);
-  }
-  
-  if (!date.getTime()) {
-    response.send("error with given date");
-  } else {
-    response.send({
-      unix: date.getTime(),
-      natural: moment.unix(date.getTime()).format("MMMM D, YYYY")
-    });
-  }
-  
+app.get("*", function(request, response) {
+    var params = request.params[0];
+    var timestamp = params.split('/')[1];
+    var jsonObj = {
+        "unix": null,
+        "natural": null
+    }
+
+    // Check to see if the date recieved is a unix timestamp, or something else.
+    // Then process based on that.
+    if (/^\d{10}$/.test(timestamp)) {
+        jsonObj.unix = timestamp;
+        jsonObj.natural = moment.unix(timestamp).format("MMMM DD, YYYY");
+        response.json(jsonObj);
+    } else if (/^.{3,9}\s\d{1,2},\s\d{4}$/.test(timestamp)) {
+        jsonObj.natural = timestamp;
+        jsonObj.unix = moment(timestamp, "MMMM DD, YYYY").unix();
+        response.json(jsonObj);
+    } else {
+        response.send("Invalid time data");
+    }
 });
 
 // listen for requests :)
-var listener = app.listen(process.env.PORT, function () {
-  console.log('Your app is listening on port ' + listener.address().port);
+var listener = app.listen(process.env.PORT, function() {
+    console.log('The microservice is listening on port ' + listener.address().port);
 });
