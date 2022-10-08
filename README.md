@@ -1,6 +1,11 @@
 # Timestamp Microservice
 -----------------------
 
+[![Lint](https://github.com/THEANTsMAN/Timestamp-Microservice/actions/workflows/lint.yml/badge.svg)](https://github.com/THEANTsMAN/Timestamp-Microservice/actions/workflows/lint.yml)
+
+
+-----------------------
+
 Runs an micro service that takes in either a unix time, or natural time (of format Month day, year)
 and returns a json object with both the unix time and natural time.
 
@@ -30,7 +35,7 @@ PORT=XXXX npm start
 OR
 
 ```javascript
-PORT=XXXX node server.js
+PORT=XXXX ts-node src/server.ts
 ```
 
 Where __XXXX__ is the port number you want it to run on.
